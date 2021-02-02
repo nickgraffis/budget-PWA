@@ -1,5 +1,5 @@
 const CACHE_NAME = "static-cache-v2";
-const DATA_CACHE_NAME = "data-cache-v1";
+const RUNTIME_CACHE = "data-cache-v1";
 
 const FILES_TO_CACHE = [
   "/",
@@ -14,7 +14,7 @@ const FILES_TO_CACHE = [
 
 self.addEventListener("install", (event) => {
   event.waitUntil(
-    caches.open(DATA_CACHE_NAME).then((cache) => cache.add("/api/transaction"))
+    caches.open(RUNTIME_CACHE).then((cache) => cache.add("/api/transaction"))
   );
 
   event.waitUntil(
@@ -42,12 +42,12 @@ self.addEventListener("activate", (event) => {
 });
 
 // fetch
-self.addEventListener("fetch", function (event) {
+self.addEventListener("fetch", (event) => {
   if (event.request.url.includes("/api/")) {
     console.log("[Service Worker] Fetch (data)", event.request.url);
     event.respondWith(
       caches
-        .open(DATA_CACHE_NAME)
+        .open(RUNTIME_CACHE)
         .then((cache) => {
           return fetch(event.request)
             .then((response) => {
